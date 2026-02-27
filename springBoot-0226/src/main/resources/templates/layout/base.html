@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공통 레이아웃</title>
+</head>
+<body>
+<div>
+    <h3>샘플 레이아웃 헤더</h3>
+</div>
+<div layout:fragment="content">
+    <p>페이지 콘텐츠 부분이고, 동적으로 교체될 예정</p>
+</div>
+<div>
+    <h3>샘플 레이아웃 푸터</h3>
+</div>
+
+<th:block layout:fragment="script">
+
+</th:block>
+
+</body>
+</html>

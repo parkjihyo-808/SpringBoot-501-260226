@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>서버로부터 전달 받은 다양한 타입의 데이터 클래스 객체들</h1>
+<h2>단순 출력용</h2>
+<div th:text="${strList}"></div>
+<div th:text="${map}"></div>
+<div th:text="${sampleDTO}"></div>
+
+<h2>자바스크립트 출력용</h2>
+<script th:inline="javascript">
+    const strList = [[${strList}]]
+    const map = [[${map}]]
+    const sampleDTO = [[${sampleDTO}]]
+
+    console.log("strList 리스트" ,strList)
+    console.log("map 맵" ,map)
+    console.log("sampleDTO " ,sampleDTO)
+
+</script>
+
+</body>
+</html>

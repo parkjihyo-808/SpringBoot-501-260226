@@ -12,4 +12,6 @@ public class SampleRestController {
         log.info("REST API 확인");
         return new String[]{"ABC","DEF","GHI"};
     }
+
+
 }

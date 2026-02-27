@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>타임리프 기본 문법</h1>
+<h2>서버로 데이터를 받아 화면에 출력</h2>
+<!--/* strList([[달러{변수명}]]: 오류 나는 상황 */-->
+<h3>서버에서 전달한 박스명: [[${strList}]] </h3>
+<!--/* th:text="달러{변수명}": 정상 주석 처리 */-->
+<h3>인라인 방식 h3 태그 내부에</h3>
+<h3 th:text="${strList}"></h3>
+
+<h3>타임리프 변수 선언해서 사용하기. </h3>
+<div th:with="num1 = ${10}, num2 = ${20}">
+    <h4 th:text="${num1 + num2}"></h4>
+</div>
+
+<h3>타임라프의 반복문 2가지 방법 확인 1</h3>
+<ul>
+    <li th:each="str : ${strList}" th:text="${str}"></li>
+</ul>
+
+<h3>타임리프의 반복문 2가지 방법 확인 2</h3>
+<ul>
+    <th:block th:each="str : ${strList}">
+        <li>[[${str}]]</li>
+    </th:block>
+</ul>
+
+<h3>반복문에 status 변수 이용</h3>
+<ul>
+    <li th:each="str,status : ${strList}" >
+    status의 index 속성: [[${status.index}]] --
+    status의 even 속성: [[${status.even}]] --
+    status의 odd 속성: [[${status.odd}]]
+    : [[${str}]]
+    </li>
+</ul>
+
+<h3>조건문, th:if / th:unless / th:switch</h3>
+<ul>
+    <li th:each="str,status : ${strList}" >
+        <span th:if="${status.odd}">ODD 속성 참 인경우: 홀수: [[${str}]]</span>
+        <span th:unless="${status.odd}">ODD 속성 참이 아닌 경우: 짝수: [[${str}]]</span>
+    </li>
+</ul>
+
+<h3>7번과 같은 형식이지만 삼항 연산자를 이용해서 표현</h3>
+<ul>
+    <li th:each="str,status : ${strList}" >
+        <span th:text="${status.odd} ? '홀수--'+${str} : '짝수--'+${str}"></span>
+    </li>
+</ul>
+
+<h3>th:switch 이용</h3>
+<ul>
+    <li th:each="str,status : ${strList}" >
+        <th:block th:switch="${status.index % 3}">
+            <span th:case="0">나머지: 0, [[${str}]]</span>
+            <span th:case="1">나머지: 1, [[${str}]] </span>
+            <span th:case="2">나머지: 2, [[${str}]] </span>
+        </th:block>
+    </li>
+</ul>
+
+<h3>타임리프로 링크 이동</h3>
+<a th:href="@{/hello}">/hello 이동</a>
+
+<h3>링크 이동 시, 쿼리 스트링 처리</h3>
+<a th:href="@{/hello(name='aaa', age=20)}">/hello 이동</a>
+
+<h3>링크 이동 시, 쿼리 스트링 처리, 배열 방식으로 처리</h3>
+<a th:href="@{/hello(types=${ {'11','22','33'} }, age=20)}">/hello 이동</a>
+
+</body>
+</html>
