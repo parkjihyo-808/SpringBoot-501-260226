@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<body>
+<div layout:fragment="content">
+
+    <!--    검색 화면 영역-->
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">검색 및 필터</h5>
+
+                    <form action="/board/list" method="get">
+                        <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+                        <div class="input-group">
+
+                            <select class="form-select" name="type" style="max-width: 150px;">
+                                <option value="">---</option>
+                                <option value="t" th:selected="${pageRequestDTO.type == 't'}">제목</option>
+                                <option value="c" th:selected="${pageRequestDTO.type == 'c'}">내용</option>
+                                <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">제목+내용</option>
+                                <option value="tcw" th:selected="${pageRequestDTO.type == 'tcw'}">제목+내용+작성자</option>
+                            </select>
+
+                            <input type="text" class="form-control" name="keyword" placeholder="검색어를 입력하세요"
+                                   th:value="${pageRequestDTO.keyword}">
+
+                            <button class="btn btn-outline-primary" type="submit">검색</button>
+                            <button class="btn btn-outline-secondary clearBtn" type="button">초기화</button>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    검색 화면 영역-->
+
+    <div class="row content">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Board List
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Bno</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Writer</th>
+                            <th scope="col">RegDate</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!--                        기존 jsp에서 jstl , 태그 라이브러리 이용했고, -->
+                        <!--                        이제는 타임리프 문법으로 교체 작업하기. -->
+                        <!--responseDTO 확인 : -->
+                        <!--PageResponseDTO(page=1, size=10, total=99, start=1, end=10, prev=false, next=false, -->
+                        <!--dtoList=[BoardDTO(bno=99, title=더미 제목...title99, content=더미 내용...content99, writer=더미 사용자...user9, regDate=2026-03-03T11:46:29.850535, modDate=2026-03-03T11:46:29.850535), BoardDTO(bno=98, title=더미 제목...title98, content=더미 내용...content98, writer=더미 사용자...user8, regDate=2026-03-03T11:46:29.843678, modDate=2026-03-03T11:46:29.843678), BoardDTO(bno=97, title=더미 제목...title97, content=더미 내용...content97, writer=더미 사용자...user7, regDate=2026-03-03T11:46:29.827475, modDate=2026-03-03T11:46:29.827475), BoardDTO(bno=96, title=더미 제목...title96, content=더미 내용...content96, writer=더미 사용자...user6, regDate=2026-03-03T11:46:29.814409, modDate=2026-03-03T11:46:29.814409), BoardDTO(bno=95, title=더미 제목...title95, content=더미 내용...content95, writer=더미 사용자...user5, regDate=2026-03-03T11:46:29.803599, modDate=2026-03-03T11:46:29.803599), BoardDTO(bno=94, title=더미 제목...title94, content=더미 내용...content94, writer=더미 사용자...user4, regDate=2026-03-03T11:46:29.788241, modDate=2026-03-03T11:46:29.788241), BoardDTO(bno=93, title=더미 제목...title93, content=더미 내용...content93, writer=더미 사용자...user3, regDate=2026-03-03T11:46:29.781314, modDate=2026-03-03T11:46:29.781314), BoardDTO(bno=92, title=더미 제목...title92, content=더미 내용...content92, writer=더미 사용자...user2, regDate=2026-03-03T11:46:29.774439, modDate=2026-03-03T11:46:29.774439), BoardDTO(bno=91, title=더미 제목...title91, content=더미 내용...content91, writer=더미 사용자...user1, regDate=2026-03-03T11:46:29.766873, modDate=2026-03-03T11:46:29.766873), BoardDTO(bno=90, title=더미 제목...title90, content=더미 내용...content90, writer=더미 사용자...user0, regDate=2026-03-03T11:46:29.753619, modDate=2026-03-03T11:46:29.753619)])-->
+                        <tr th:each="dto:${responseDTO.dtoList}">
+                            <th scope="row">[[${dto.bno}]]</th>
+                            <td>
+                                [[${dto.title}]]
+                            </td>
+                            <td>[[${dto.writer}]]</td>
+                            <td>[[${#temporals.format(dto.regDate,'yyyy-MM-dd HH:mm:ss')}]]</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--                    기존 스프링 레거시에서 사용한, 부트스트랩의 페이지 네이션 가져오기 -->
+                    <div class="d-flex justify-content-center">
+                        <ul class="pagination flex-wrap">
+                            <li class="page-item" th:if="${responseDTO.prev}">
+                                <a class="page-link" th:data-num="${responseDTO.start - 1}">Previous</a>
+                            </li>
+                            <th:block th:each="i : ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+                                <li th:class="${responseDTO.page == i } ? 'page-item active' : 'page-item'">
+                                    <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+
+                            <li class="page-item" th:if="${responseDTO.next}">
+                                <a class="page-link" th:data-num="${responseDTO.end + 1}">Next</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+    // document.querySelector(".pagination") -> <ul>태그를 의미,
+    // <ul>태그 를 포함해서, 하위에 어떤 태그, <li>, <a> 태그도 있다.
+    document.querySelector(".pagination").addEventListener("click", function (e) {
+        e.preventDefault(); // 기본 동작 막기
+        e.stopPropagation(); // 부모 요소 전팍 막기, 해당 요소외에는 클릭을 감지 안하겠다.
+        const target = e.target //클릭한 <li>, <a> 태그 요소 의미,
+        if (target.tagName !== 'A') {
+            return // 이벤트 처리 동작을 안하고, 그냥 나가겠다.
+        }
+        // <a>태그만 이벤트 처리를 하겠다.
+        // <a class="page-link" data-num=""
+        const num = target.getAttribute("data-num")
+
+        // 기존 정보는 단순, 페이지 정보만 유지한 채 이동했고,
+        // self.location = `/todo2/list?page=\${num}`
+
+        // 검색착 폼 태그를 이용해서, 서버에, 검색, 필터 준비물 같이 전달.
+        // 물론, 페이지, 사이즈 정보도 같이 전달.  히든으로 페이지, 사이즈 전달.
+        // 폼 방식으로 만 서버에 전달하면, 1) 검색, 필터 준비물 + 2) 페이지 정보, 사이즈 정보 같이 전달.
+        const formObj = document.querySelector("form")
+
+        // innerHTML 속성을 이용해서, page 정보를 재전달.
+        formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`
+
+        formObj.submit()
+    }, false)
+
+    document.querySelector(".clearBtn").addEventListener("click", function (e){
+        e.preventDefault()
+        e.stopPropagation()
+        self.location = `/board/list`
+    })
+</script>
+</body>
+</html>

@@ -1,23 +1,17 @@
-<!DOCTYPE html>
-<html lang="ko" class="h-100"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.thymeleaf.org"
->
+
+<!doctype html>
+<html lang="ko" class="h-100">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, 그리고 Bootstrap 기여자들">
     <meta name="generator" content="Hugo 0.84.0">
-    <!--    <title>Sticky Footer Navbar Template · Bootstrap v5.0</title>-->
-    <title>공통 레이아웃</title>
+    <title>Sticky Footer Navbar Template · Bootstrap v5.0</title>
 
     <link rel="canonical" href="https://getbootstrap.kr/docs/5.0/examples/sticky-footer-navbar/">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-    <!--    우리가 만든 css, js 를 불러오는 코드가 필요함, 타임리프 태그를 이용해서, 링크 설정. -->
-    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
     <meta name="theme-color" content="#7952b3">
 
     <style>
@@ -39,6 +33,7 @@
     <link href="sticky-footer-navbar.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column h-100">
+
 <header>
     <!-- Fixed navbar -->
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -59,19 +54,21 @@
                         <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                     </li>
                 </ul>
-                <!--                <form class="d-flex">-->
-                <!--                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">-->
-                <!--                    <button class="btn btn-outline-success" type="submit">Search</button>-->
-                <!--                </form>-->
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
             </div>
         </div>
     </nav>
 </header>
 
-<!--flex-shrink-0 : 찌그러짐 방지 -->
-<main class="flex-shrink-0 pt-5 mt-3">
-    <div class="container" layout:fragment="content">
-        <p>페이지 콘텐츠 부분이고, 동적으로 교체될 예정</p>
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+    <div class="container">
+        <h1 class="mt-5">Sticky footer with fixed navbar</h1>
+        <p class="lead">Pin a footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A fixed navbar has been added with <code class="small">padding-top: 60px;</code> on the <code class="small">main &gt; .container</code>.</p>
+        <p>Back to <a href="/docs/5.0/examples/sticky-footer/">the default sticky footer</a> minus the navbar.</p>
     </div>
 </main>
 
@@ -80,14 +77,13 @@
         <span class="text-muted">Place sticky footer content here.</span>
     </div>
 </footer>
-<!--    우리가 만든 css, js 를 불러오는 코드가 필요함, 타임리프 태그를 이용해서, 링크 설정. -->
-<script th:src="@{/js/script.js}"></script>
-<th:block layout:fragment="script">
 
-</th:block>
-
+<!--변경2-->
+<!--<script src="/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+
+
 </body>
 </html>

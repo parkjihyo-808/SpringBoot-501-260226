@@ -22,6 +22,6 @@ abstract class BaseEntity { // 설계 클래스 목적으로 사용할 예정
 
     // 수정 시간 필드
     @LastModifiedDate
-    @Column(name = "modDate", updatable = false)
+    @Column(name = "modDate")
     private LocalDateTime modDate;
 }
