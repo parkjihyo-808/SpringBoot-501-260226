@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.util.Arrays;
 
 @Builder
 @Data
@@ -52,7 +53,7 @@ public class PageRequestDTO {
     // 변경2,===============================================================
 
     public String getLink() {
-        if(link == null && link.isEmpty()) {
+        if(link == null || link.isEmpty()) {
             // 기본 : String, 불변, 객체를 새로 생성할 때마다, 새로운 메모리를 사용하고,
             // StringBuilder, 기존 메모리에(변경없이) 작업 및 사용함, 메모리 절약 효과. 그래서, 사용함.
             StringBuilder builder = new StringBuilder();

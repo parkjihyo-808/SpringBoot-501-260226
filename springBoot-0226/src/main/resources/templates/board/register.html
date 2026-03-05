@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<body>
+<div layout:fragment="content">
+
+    <div class="row content">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Board Register
+                </div>
+                <div class="card-body">
+                    <form action="/board/register" method="post">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Title:</span>
+                            <input class="form-control" type="text" name="title" placeholder="board 제목을 입력해주세요">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Content:</span>
+                            <textarea class="form-control col-sm-5" rows="5"  name="content"></textarea>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"> Writer:  </span>
+                            <input class="form-control" type="text" name="writer">
+                        </div>
+
+                        <div>
+                            <button class="btn btn-primary" type="submit">등록하기</button>
+                            <button class="btn btn-secondary" type="reset">초기화</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+    const errors = [[${errors}]]
+    console.log("서버로부터 받은 유효성 체크 오류 : ", errors)
+
+    let errorMsg = ''
+    if(errors) {
+        for ( let i = 0; i < errors.length; i++) {
+            errorMsg += `${errors[i].field}는 : ${errors[i].code} \n`
+        }
+        alert(errorMsg)
+    }
+</script>
+</body>
+</html>

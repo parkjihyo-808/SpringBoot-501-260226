@@ -15,7 +15,7 @@
                     <h5 class="card-title">검색 및 필터</h5>
 
                     <form action="/board/list" method="get">
-                        <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+                        <!--                        <input type="hidden" name="size" th:value="${pageRequestDTO.size}">-->
                         <div class="input-group">
 
                             <select class="form-select" name="type" style="max-width: 150px;">
@@ -41,6 +41,7 @@
     </div>
     <!--    검색 화면 영역-->
 
+    <!--    목록화면-->
     <div class="row content">
         <div class="col">
             <div class="card">
@@ -66,7 +67,9 @@
                         <tr th:each="dto:${responseDTO.dtoList}">
                             <th scope="row">[[${dto.bno}]]</th>
                             <td>
-                                [[${dto.title}]]
+                                <a th:href="|@{/board/read(bno=${dto.bno})}&${link}|">
+                                    [[${dto.title}]]
+                                </a>
                             </td>
                             <td>[[${dto.writer}]]</td>
                             <td>[[${#temporals.format(dto.regDate,'yyyy-MM-dd HH:mm:ss')}]]</td>
@@ -94,7 +97,29 @@
             </div>
         </div>
     </div>
-</div>
+    <!--    목록화면-->
+
+    <!--    모달창 테스트 -->
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    모달창 테스트 -->
+
+</div> <!--    fragment-->
 <script layout:fragment="script" th:inline="javascript">
     // document.querySelector(".pagination") -> <ul>태그를 의미,
     // <ul>태그 를 포함해서, 하위에 어떤 태그, <li>, <a> 태그도 있다.
@@ -123,11 +148,24 @@
         formObj.submit()
     }, false)
 
-    document.querySelector(".clearBtn").addEventListener("click", function (e){
+    document.querySelector(".clearBtn").addEventListener("click", function (e) {
         e.preventDefault()
         e.stopPropagation()
         self.location = `/board/list`
     })
+
+    // 일반적인 alert를 이용해서, 글 작성후, 작성된 글 번호를 출력 해보기.
+    const result = [[${result}]]
+
+    // 모달 띄우기 위해서,
+    const modal = new bootstrap.Modal(document.querySelector(".modal"))
+
+    if (result) {
+        // alert(result)
+        console.log(result)
+        // 모달창으로 교체 작업,
+        modal.show()
+    }
 </script>
 </body>
 </html>

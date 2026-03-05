@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<body>
+<div layout:fragment="content">
+
+    <div class="row content">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Board Modify
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/board/modify}" method="post" id="f1">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Bno:</span>
+                            <input class="form-control" type="text" name="bno"
+                                   th:value="${dto.bno}"
+                                   readonly>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Title:</span>
+                            <input class="form-control" type="text" name="title"
+                                   th:value="${dto.title}"
+                                   placeholder="board 제목을 입력해주세요">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Content:</span>
+                            <textarea class="form-control col-sm-5" rows="5" name="content"
+                                      th:text="${dto.content}"
+                            >
+                        </textarea>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"> Writer:  </span>
+                            <input class="form-control" type="text"
+                                   th:value="${dto.writer}"
+                                   name="writer" readonly>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"> RegDate:  </span>
+                            <input class="form-control" type="text"
+                                   th:value="${#temporals.format(dto.regDate,'yyyy-MM-dd HH:mm:ss')}"
+                                   name="regDate" disabled>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"> ModDate:  </span>
+                            <input class="form-control" type="text"
+                                   th:value="${#temporals.format(dto.modDate,'yyyy-MM-dd HH:mm:ss')}"
+                                   name="modDate" disabled>
+                        </div>
+
+                        <button type="button" class="btn btn-primary listBtn">목록가기</button>
+                        <button type="button" class="btn btn-secondary modBtn">수정하기</button>
+                        <button type="button" class="btn btn-danger removeBtn">삭제하기</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+    const errors = [[${errors}]]
+    console.log("서버로부터 받은 유효성 체크 오류 : ", errors)
+
+    let errorMsg = ''
+    if(errors) {
+        for ( let i = 0; i < errors.length; i++) {
+            errorMsg += `${errors[i].field}는 : ${errors[i].code} \n`
+        }
+        alert(errorMsg)
+    }
+
+    // 수정 로직 처리 , 이벤트 작업.
+    const link = [[${pageRequestDTO.getLink()}]]
+    // form 태그를 이용해서, 폼내부에 있는 값을 서버에 전달.
+    const formObj = document.querySelector("#f1")
+
+    document.querySelector(".modBtn").addEventListener("click", function (e){
+            e.preventDefault();
+            e.stopPropagation();
+
+            formObj.action = `/board/modify?${link}`
+            formObj.method = "post"
+            formObj.submit()
+        }, false
+    )
+
+</script>
+</body>
+</html>

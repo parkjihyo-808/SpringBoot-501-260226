@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<body>
+<div layout:fragment="content">
+
+    <div class="row content">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Board Read
+                </div>
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Bno:</span>
+                        <input class="form-control" type="text" name="bno"
+                               th:value="${dto.bno}"
+                               readonly>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Title:</span>
+                        <input class="form-control" type="text" name="title"
+                               th:value="${dto.title}"
+                               placeholder="board 제목을 입력해주세요" readonly>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Content:</span>
+                        <textarea class="form-control col-sm-5" rows="5" name="content"
+                                  th:text="${dto.content}"
+                                  readonly>
+                        </textarea>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"> Writer:  </span>
+                        <input class="form-control" type="text"
+                               th:value="${dto.writer}"
+                               name="writer" readonly>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"> RegDate:  </span>
+                        <input class="form-control" type="text"
+                               th:value="${#temporals.format(dto.regDate,'yyyy-MM-dd HH:mm:ss')}"
+                               name="regDate" readonly>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"> ModDate:  </span>
+                        <input class="form-control" type="text"
+                               th:value="${#temporals.format(dto.modDate,'yyyy-MM-dd HH:mm:ss')}"
+                               name="modDate" readonly>
+                    </div>
+
+                    <div th:with="link=${pageRequestDTO.getLink()}">
+                        <a th:href="|@{/board/list}?${link}|" class="text-decoration-none">
+                            <button class="btn btn-primary">목록가기</button>
+                        </a>
+                        <a th:href="|@{/board/modify}?bno=${dto.bno}&${link}|" class="text-decoration-none">
+                            <button class="btn btn-secondary">수정하기</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+
+</script>
+</body>
+</html>
