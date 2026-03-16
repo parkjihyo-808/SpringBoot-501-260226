@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 @Log4j2
@@ -31,6 +33,21 @@ public class CustomRestAdvice {
             });
         }
         return ResponseEntity.badRequest().body(errorMap);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Map<String, String>> handleNoSuchElementException(NoSuchElementException e) {
+        log.error("CustomRestAdvice에서, 에러를 일괄 처리중...e : "+ e);
+        log.error("데이터를 찾을수 없습니다.  : "+ e.getMessage());
+
+        Map<String, String> errorMap = new HashMap<>();
+
+        errorMap.put("message", "해당 데이터가 존재하지 않습니다.");
+        errorMap.getOrDefault("details", e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMap);
+
     }
 
 }

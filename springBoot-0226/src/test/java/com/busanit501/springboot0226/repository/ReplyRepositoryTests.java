@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.stream.IntStream;
+
 @SpringBootTest
 @Log4j2
 public class ReplyRepositoryTests {
@@ -76,4 +78,23 @@ public class ReplyRepositoryTests {
         log.info("result.hasNext() 다음  :" + result.hasNext());
         log.info("result.hasPrevious() 이전  :" + result.hasPrevious());
     }
+    // 댓글 페이지네이션 위한 더미 댓글 넣기
+    @Test
+    public void testInsertMany() {
+        // 댓글을 작성 하려면, 부모 게시글 번호가 필요,
+        // 각자 데이터베이스에 따라서, 다르므로 꼭 확인하고, 작업.
+        Long bno = 90L;
+
+        IntStream.range(1, 101).forEach(i -> {
+            Board board = Board.builder().bno(bno).build();
+            Reply reply = Reply.builder()
+                    .board(board)
+                    .replyText("샘플 댓글" + i)
+                    .replyer("샘플 작성자" + i)
+                    .build();
+
+            replyRepository.save(reply);
+        });
+    }
+
 }
