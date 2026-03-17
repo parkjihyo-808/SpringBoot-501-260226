@@ -130,6 +130,33 @@
     </div>
     <!--    댓글 등록 모달창1-->
 
+    <!--   댓글 수정 모달창2-->
+    <div class="modal fade modifyModal" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--                    제목 부분이 수정이 되거나, 상세보기등 제목을 동적으로 사용할 예정. -->
+                    <h5 class="modal-title replyHeader"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--                    댓글 등록 입력폼 추가하기-->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">내용</span>
+                        <input type="text" class="form-control modifyText">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info modifyBtn">댓글 수정</button>
+                    <button type="button" class="btn btn-danger removeBtn">댓글 삭제</button>
+                    <button type="button" class="btn btn-secondary modifyCloseBtn" data-bs-dismiss="modal">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    댓글 수정 모달창2-->
+
 
     <!--    axios 설치 cdn 링크 추가-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -179,8 +206,8 @@
             .catch(e => {console.error(e)})
     }
     // 함수 호출(사용하기), 댓글 목록을 받아서, 일단 콘솔로 확인.
-    printReplies(1,10)
-
+    printReplies(1,10,true)
+    //
     // 작업2
     // 화면에, innerHTML 이용해서, 동적으로 HTML  요소를 그리기.
     const replyList = document.querySelector('.replyList') // 댓글목록이 출력이 되는 DOM 요소
@@ -296,6 +323,125 @@
                 alert("예외 발생함.")
             })
     },false)
+
+
+    //댓글의 페이지네이션 번호를 클릭시, 해당 댓글 목록으로 이동하기.
+    let page = 1
+    let size = 10
+    // 댓글의 페이지네이션 ul 태그 하위의 li 태그 하위에 a 태그의 이벤트 처리 작업 진행.
+    replyPaging.addEventListener("click", function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        // 클릭 요소의 타겟을 지정, 우리는 a 태그를 선택하는게 목적.
+        const target = e.target
+        if(!target || target.tagName != 'A' ){
+            // 클릭한 요소가 a  태그가 아니면, 이벤트 동작을 안하겠다.
+            return
+        }
+
+        // a 태그를 선택 했을 경우,
+        const pageNum = target.getAttribute("data-page")
+        // 기존 page 1, 클릭한  page 번호로 교체.
+        page = pageNum
+        // 해당 page 번호로 댓글 목록을 출력.
+        printReplies(page,size)
+    })
+
+
+    // 댓글 수정 관련 이벤트 리스너, 요소 준비물 작업.
+    // 댓글 수정 모달 작업.
+    const modifyModal = new bootstrap.Modal(document.querySelector(".modifyModal"))
+
+    // 댓글 수정하는 화면에서,
+    // 1)헤더 부분 , 2)댓글 내용 입력 부분, 3)수정 버튼 , 4)삭제 버튼  5) 닫는 부분을
+    // 요소로 가져오기.
+    const replyHeader = document.querySelector(".replyHeader")
+    const modifyText = document.querySelector(".modifyText")
+    const modifyBtn = document.querySelector(".modifyBtn")
+    const removeBtn = document.querySelector(".removeBtn")
+    const modifyCloseBtn = document.querySelector(".modifyCloseBtn")
+
+    // 특정 댓글을 클릭시, 모달 수정창이 출력 되게 작업.
+    // 댓글 목록의 태그 : <ul> -> <li> -> <span> 태그의
+    // data-rno 속성의 댓글번호를 가져와서, 서버에 호출해서, 댓글 하나조회 작업
+    replyList.addEventListener("click", function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        // 클릭 요소를 확인하고,
+        const target = e.target
+        // 클릭된 요소 중에서, 우리는 span  태그만 클릭시 이벤트 처리를 하겠다.
+        if(!target || target.tagName != 'SPAN') {
+            return
+        }
+        // span 태그를 클릭을 했다면,
+        // data-rno 속성의 댓글번호를 가져와서
+        const rno = target.getAttribute("data-rno")
+        if(!rno) { // 댓글 번호가 없으면, 이벤트 처리 안하겠다.
+            return;
+        }
+
+        // 댓글 번호 rno가 있다면.
+        // 댓글의 내용을 모달창에 채워서, 화면 출력.
+        // reply.js 에 함수가 있는데, 댓글을 하나조회하는 함수. Promise 기반
+        getReply(rno).then(reply => { // 서보로부터 정상 응답 받은 데이터 : reply  담기.
+            console.log(reply)
+            replyHeader.innerHTML = reply.rno
+            modifyText.value = reply.replyText
+            modifyModal.show()
+        }).catch(e => alert("오류 발생"))
+    },false)
+
+
+    // 댓글 수정 버튼 클릭시, 변경되 댓글의 내용을 서버에 전달하기.
+    modifyBtn.addEventListener("click", function () {
+
+        // 변경된, 댓글의 내용을, 자바스크립트 객체에 담기
+        const replyObj = {
+            bno:bno, // 부모 게시글의 내용은 전역 변수로 이용중.
+            rno:replyHeader.innerHTML, // 헤더에 있는 댓글의 번호를 가져오기
+            replyText:modifyText.value
+        }
+
+        // reply.js 에서 만든 수정하는 함수 이용.
+        // modifyReply 이용하기.
+        modifyReply(replyObj)
+            .then(result => {
+                // 수정 성공하면, 수정된 댓글의 번호를 받아옴, 그래서, result , 댓글번호가 있음.
+                alert(result.rno+ ' 댓글이 수정되었습니다.')
+                replyText.value = ''
+                modifyModal.hide()
+                printReplies(page,size,true) // 수정후, 댓글의 마지막페이지로 이동 가능.
+            })
+            .catch(e => {
+                console.log("댓글 수정 실패")
+            })
+    },false)
+
+    // 취소 버튼으로, 모달창 숨기기.
+    modifyCloseBtn.addEventListener("click", function (e) {
+        modifyModal.hide()
+    },false)
+
+    // 삭제 버튼 클릭시 이벤트 처리
+    removeBtn.addEventListener("click", function (e) {
+        // 모달창 헤더에 있는 댓글의 rno 번호를 가져와서, 삭제함수에 인자값으로 대입하기.
+        removeReply(replyHeader.innerHTML)
+            .then(result => {
+                alert(result.rno + ' 댓글이 삭제되었습니다.')
+                replyText.value = ''
+                modifyModal.hide()
+
+                // 삭제 후, 첫페이지 , 마지막 페이지로 갈지 정하면 됩니다.
+                // 안전하게, 삭제 후, 1페이지로 이동하기.
+                page = 1
+                printReplies(page,size)
+            })
+            .catch(e => {
+                console.log("댓글 삭제 실패")
+            })
+    },false)
+
 </script>
 </body>
 </html>
