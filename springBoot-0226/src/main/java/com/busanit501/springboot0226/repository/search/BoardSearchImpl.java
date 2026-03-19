@@ -7,6 +7,7 @@ import com.busanit501.springboot0226.dto.BoardListReplyCountDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 import java.util.List;
 
+@Slf4j
 public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardSearch{
 
     public BoardSearchImpl() {
@@ -158,5 +160,29 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
         return result;
         //===================================================================================
+    }
+
+    @Override
+    public Page<BoardListReplyCountDTO> searchWithAll(String[] types, String keyword, Pageable pageable) {
+        QBoard board = QBoard.board;
+        QReply reply = QReply.reply;
+
+        JPQLQuery<Board> boardJPQLQuery = from(board); // select .. from board ; 같은 효과. 자바로 데이터베이스 작업중.
+        // Board 테이블에, reply 테이블 2개를 합치는데, 조건이,
+        //  Board 테이블의 bno 와, reply의 board.bno 같은 경우, 합친다.
+        // 하나의 테이블에, Board 테이블 내용도 있고, Reply 테이블 내용도 같이 있어요.
+        boardJPQLQuery.leftJoin(reply).on(reply.board.eq(board));
+        getQuerydsl().applyPagination(pageable,boardJPQLQuery);
+
+        List<Board> boardList = boardJPQLQuery.fetch(); // 페이징 처리가 된 10개 데이터 목록
+
+        boardList.forEach(board1 -> {
+            log.info("bno : " + board1.getBno());
+            log.info("이미지 셋 : " + board1.getImageSet());
+            log.info("=================================");
+        });
+
+
+        return null;
     }
 }
