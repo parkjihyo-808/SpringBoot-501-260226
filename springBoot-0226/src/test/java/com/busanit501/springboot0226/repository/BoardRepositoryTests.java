@@ -1,7 +1,10 @@
 package com.busanit501.springboot0226.repository;
 
 import com.busanit501.springboot0226.domain.Board;
+
 import com.busanit501.springboot0226.domain.BoardImage;
+import com.busanit501.springboot0226.domain.Reply;
+import com.busanit501.springboot0226.dto.BoardListAllDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,6 @@ public class BoardRepositoryTests {
     @Autowired
     private ReplyRepository replyRepository;
 
-
     @Test
     public void testInsert() {
         // 더미 데이터 100개를 임의로 작성, 하드코딩. , 반목문을 이용해서, 추가 할 예정.
@@ -48,7 +50,7 @@ public class BoardRepositoryTests {
 
     @Test
     public void testSelect() {
-        Long bno = 90L;
+        Long bno = 100L;
         Optional<Board> result = boardRepository.findById(bno);
         Board board = result.orElseThrow();
         log.info("board 확인 : " +board );
@@ -56,7 +58,7 @@ public class BoardRepositoryTests {
 
     @Test
     public void testUpdate() {
-        Long bno = 90L;
+        Long bno = 100L;
         Optional<Board> result = boardRepository.findById(bno);
         Board board = result.orElseThrow();
         // 수정 메서드를 호출해서, 변경 후, 저장 및 수정.
@@ -66,7 +68,7 @@ public class BoardRepositoryTests {
 
     @Test
     public void testDelete() {
-        Long bno = 90L;
+        Long bno = 100L;
         boardRepository.deleteById(bno);
     }
 
@@ -142,19 +144,22 @@ public class BoardRepositoryTests {
     // @EntityGraph 이용한 호출 , 즉 N+1 문제 해결책.
     // 조인해서, 두 테이블을 붙여서, 한번만 호출할 예정.
     // 이 과정을 보여주기.
-    @Test
     @Transactional
+    @Test
     //import org.springframework.transaction.annotation.Transactional;
     public void testReadWithImage() {
         // 샘플테이블에서, 게시글 번호를 조회.
         // 각자 데이터 베이스 이용해야함.
-        // Optional<Board> result = boardRepository.findById(1L);
+//        Optional<Board> result = boardRepository.findById(1L);
         // 만들어둔 메서드 사용.
-        Optional<Board> result = boardRepository.findById(1L);
+        Optional<Board> result = boardRepository.findByIdWithImages(1L);
         Board board = result.orElseThrow();
         log.info("board 조회 해보기 : " + board);
+
+
+
         log.info("====================================== ");
-        log.info("board에 첨부된 이미지들을 조회 해보기 : " + board.getImageSet());
+//        log.info("board에 첨부된 이미지들을 조회 해보기 : " + board.getImageSet());
         // 에러가 발생함. no session
 
         // 첨부 이미지를 확인
@@ -163,6 +168,7 @@ public class BoardRepositoryTests {
         }
 
     }
+
 
     // 수정해보기.
     // 해당 메서드안에 여러개의 작업을 하나의 단위로 만들어서, 모두 수행이 되면 진행시키고, 하나라도 진행이 안되면, 진행안해줘
@@ -203,6 +209,44 @@ public class BoardRepositoryTests {
         boardRepository.deleteById(bno);
     }
 
+    // 약 100 개정도의 게시글과, 댓글, 첨부 이미지 까지만, 더미데이터 추가 해보기.
+    @Transactional
+    @Commit
+    @Test
+    public void testInsertAll() {
+        for (int i = 1; i <= 100; i++) {
+            Board board = Board.builder()
+                    .title("샘플 데이터 " + i)
+                    .content("샘플 제목 " + i)
+                    .writer("이상용" + i)
+                    .build();
+
+            for (int j = 0; j < 3; j++) {
+                if (i % 5 == 0) {
+                    // 5번째 씩 , 첨부 이미지 추가 안하기.
+                    continue;
+                }
+                // 첨부 이미지 3장씩 더미데이터
+                String uuid = UUID.randomUUID().toString();
+                String fileName = "샘플 이미지";
+                board.addImage(uuid, fileName + j + ".png");
+
+
+            }
+            // 게시글 작성 후 ,
+            boardRepository.save(board);
+            // 댓글 달기.
+            for (int j = 0; j < 3; j++) {
+                Reply reply = Reply.builder()
+                        .board(board)
+                        .replyText("샘플 댓글" + j)
+                        .replyer("이상용")
+                        .build();
+                replyRepository.save(reply);
+            }
+        }
+    }
+
     // N + 1 , test 문제 상황 보기.
     @Transactional
     @Test
@@ -210,6 +254,17 @@ public class BoardRepositoryTests {
         Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
         boardRepository.searchWithAll(null,null,pageable);
 
+    }
+
+    @Transactional
+    @Test
+    // 1)댓글 갯수 와 2)첨부 이미지 목록 존재 여부
+    public void testSearchWithAll2() {
+        Pageable pageable = PageRequest.of(0,10,
+                Sort.by("bno").descending());
+        Page<BoardListAllDTO> result =  boardRepository.searchWithAll(null,null,pageable);
+        log.info("result.getTotalElements"+result.getTotalElements());
+        result.getContent().forEach(dto -> log.info("dto :  " + dto));
     }
 
 }

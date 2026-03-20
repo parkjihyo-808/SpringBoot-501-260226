@@ -1,7 +1,5 @@
 package com.busanit501.springboot0226.dto;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,24 +12,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardDTO {
-
+public class BoardListAllDTO {
     private Long bno;
-
-    @NotEmpty
-    @Size(min = 3, max = 100)
     private String title;
-
-    @NotEmpty
-    private String content;
-
-    @NotEmpty
     private String writer;
-
     private LocalDateTime regDate;
-    private LocalDateTime modDate;
-
-    // 첨부 파일들을 담을 준비,
-    private List<String> fileNames;
-
+    //댓글 갯수 표기 하기 위한 용도.
+    private Long replyCount;
+    // 첨부 이미지들
+    private List<BoardImageDTO> boardImages;
 }
