@@ -58,7 +58,7 @@
                             <th scope="col">RegDate</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody th:with="link = ${pageRequestDTO.getLink()}">
                         <!--                        기존 jsp에서 jstl , 태그 라이브러리 이용했고, -->
                         <!--                        이제는 타임리프 문법으로 교체 작업하기. -->
                         <!--responseDTO 확인 : -->
@@ -73,6 +73,13 @@
                                 <span class="badge progress-bar-success" style="background-color: red">
                                     [[${dto.replyCount}]]
                                 </span>
+
+                                <!-- 첨부이미지 출력 해보기-->
+                                <div th:if="${dto.boardImages != null && dto.boardImages.size()>0}">
+                                    <img style="width: 100px" th:each="boardImage: ${dto.boardImages}"
+                                         th:src="|/view/s_${boardImage.uuid}_${boardImage.fileName}|">
+                                </div>
+                                <!--첨부이미지 출력 해보기-->
 
                             </td>
                             <td>[[${dto.writer}]]</td>

@@ -60,11 +60,23 @@
                             <button class="btn btn-secondary">수정하기</button>
                         </a>
                     </div>
+                </div> <!--        card-body 끝나는 부분-->
+            </div>   <!--        card 끝나는 부분-->
+            <!--첨부이미지 표시 영역-->
+            <div class="col">
+                <div class="card" th:if="${dto.fileNames != null && dto.fileNames.size()>0}">
+                    <img class="card-img-top"
+                         th:each="fileName: ${dto.fileNames}"
+                         th:src="|/view/${fileName}|"
+                    >
                 </div>
             </div>
-        </div>
-        <!--        row 끝나는 부분-->
-    </div>
+            <!--첨부이미지 표시 영역-->
+        </div> <!--        col 끝나는 부분-->
+
+
+
+    </div> <!--        row 끝나는 부분-->
 
     <!--    댓글 입력 버튼, 입력창, -->
     <!--    1)댓글의 목록, 2)댓글 추가 버튼 , 3)페이징 번호 화면 작업-->

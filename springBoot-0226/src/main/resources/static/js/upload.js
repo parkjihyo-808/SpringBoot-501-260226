@@ -19,7 +19,8 @@ async function removeFileToServer (uuid, fileName){
     console.log(fileName)
 
     const response = await axios.delete(
-        `/delete/${uuid}_${fileName}`
+        //오타 수정 , delete -> remove
+        `/remove/${uuid}_${fileName}`
     );
     return response.data
 }
