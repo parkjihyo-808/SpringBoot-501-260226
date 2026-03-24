@@ -78,7 +78,12 @@ dependencies {
 // 8
 // 스프링 시큐리티, 버전.
 // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
-    implementation("org.springframework.boot:spring-boot-starter-security:3.5.11")
+   implementation("org.springframework.boot:spring-boot-starter-security:3.5.11")
+
+    //9
+    // 화면에서, 인증 정보를 처리하는 타임리프 도구 사용.
+// https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity6
+    implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity6', version: '3.1.2.RELEASE'
 
     // 순서3 queryDsl
     annotationProcessor(

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="www.thymeleaf.org"
+      layout:decorate="~{layout/base}"
+      lang="ko">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="card align-self-center">
+        <div class="card-header">
+            LOGIN Page
+        </div>
+        <div class="card-body">
+            <!--            서버로부터 전달받은 logout 파라미터의 유무에 따라서 , 로그아웃의 유무를 판단하기.-->
+            <th:block th:if="${param.logout != null}">
+                <h1>로그 아웃 되었습니다.~~~</h1>
+            </th:block>
+            <form id="loginForm" action="/member/login" method="post" th:if="${param.logout == null}">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">아이디</span>
+                    <input type="text" name="username" class="form-control" placeholder="USER ID">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">패스워드</span>
+                    <input type="password" name="password" class="form-control" placeholder="PASSWORD">
+                </div>
+
+                <div class="input-group mb-3">
+                    <input type="checkbox" name="remember-me" class="form-check-input">
+                    <label class="form-check-label">자동로그인</label>
+                </div>
+
+                <div class="my-4">
+                    <button type="button" class="btn btn-primary w-100 joinBtn">Join</button>
+                </div>
+                <div class="my-4">
+                    <button type="submit" class="btn btn-primary w-100 submitBtn">LOGIN</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

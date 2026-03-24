@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,6 +49,9 @@ public class BoardController {
     }
 
     // 화면 제공
+    // 로그인 인증한 유저만, 글쓰기 화면에 접근이 가능
+//    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("isAuthenticated()")
     @GetMapping("/register")
     public  void registerGet() {
 
@@ -108,6 +112,8 @@ public class BoardController {
     public String remove(BoardDTO boardDTO,  RedirectAttributes redirectAttributes) {
         log.info("BoardController 에서, remove 작업중");
 
+        log.info("BoardController 에서, remove 작업중2 boardDTO : " + boardDTO);
+
         Long bno = boardDTO.getBno();
 
         // 실무에서, 삭제시, 먼저 DB 의 내용먼저 삭제 후, 그다음에, 물리파일 삭제 하기.
@@ -137,11 +143,12 @@ public class BoardController {
     public void removeFiles(List<String> fileNames) {
         for (String filename : fileNames) {
             Resource resource = new FileSystemResource(uploadPath+ File.separator+filename);
-//            String resourceName = resource.getFilename();
+            String resourceName = resource.getFilename();
 
             // 리턴 타입 Map 전달,
             Map<String,Boolean> resultMap = new HashMap<>();
             boolean deleteCheck = false;
+            log.info("BoardController , removeFiles 1 : resourceName " +resourceName );
             try {
                 // 파일 삭제시, 이미지 파일일 경우, 원본 이미지와 , 썸네일 이미지 2개 있어서
                 // 이미지 파일 인지 여부를 확인 후, 이미지 이면, 썸네일도 같이 제거해야함.
@@ -149,7 +156,7 @@ public class BoardController {
                 // 삭제 여부를 업데이트
                 // 원본 파일을 제거하는 기능. (실제 물리 파일 삭제 )
                 deleteCheck =resource.getFile().delete();
-
+                log.info("BoardController , removeFiles 2 : deleteCheck " +deleteCheck );
                 if (contentType.startsWith("image")) {
                     // 썸네일 파일을 생성해서, 파일 클래스로 삭제를 진행.
                     // uploadPath : C:\\upload\springTest

@@ -46,8 +46,8 @@
                             <div class="uploadHidden">
                                 <!--첨부한 이미지의 요소를 첨부할 예정. 서버 전달용이라서, -->
                                 <!-- 숨겨 두기.-->
-                                <button type="button" class="btn btn-primary uploadFileBtn">파일추가</button>
                             </div>
+                            <button type="button" class="btn btn-primary uploadFileBtn">파일추가</button>
                         </div>
                         <!-- 이미지첨부 영역-->
 
@@ -153,18 +153,6 @@
     // form 태그를 이용해서, 폼내부에 있는 값을 서버에 전달.
     const formObj = document.querySelector("#f1")
 
-    document.querySelector(".modBtn").addEventListener("click", function (e){
-            e.preventDefault();
-            e.stopPropagation();
-
-            formObj.action = `/board/modify?${link}`
-            formObj.method = "post"
-            formObj.submit()
-        }, false
-    )
-
-
-
     // 순서1
     // 화면에서, 엑스박스를 클릭시, 화면에서 제거를 하기.
     // 글작성 화면에서, 첨부이미지를 포함해서, 서버에 axios 이용해서 전달하는 과정과 거의 비슷.
@@ -181,15 +169,13 @@
         console.log("uuid : " + uuid)
         console.log("fileName : " + fileName)
         console.log("obj : " + obj)
-        console.log("removeFileList : " + removeFileList)
-
 
         // 삭제할 명단에 추가하기
         removeFileList.push({uuid, fileName})
+        console.log("removeFileList : " , removeFileList)
         // 화면 상에서 카드 요소를 제거하기.
         const targetDiv = obj.closest(".card")
         targetDiv.remove()
-
     }
 
     // 순서2,
@@ -267,24 +253,7 @@
         uploadResult.innerHTML += str
     }
 
-    // 순서3,
-    // 수정 작업,
-    //수정 하기 버튼 클릭시, 이벤트 작업.
-    document.querySelector(".modBtn").addEventListener("click", function (e) {
-        e.preventDefault()
-        e.stopPropagation()
 
-        formObj.action = `/board/modify?${link}`
-
-        // 첨부파일을 히든으로 추가., 정의해야 함.
-        appendFileData()
-
-        // 삭제 대상 파일 삭제하는 함수 정의,
-        callRemoveFiles()
-
-        formObj.method = 'post'
-        formObj.submit()
-    })
 
     //순서4
     // appendFileData
@@ -310,11 +279,51 @@
     // 순서5
     // callRemoveFiles()
     function callRemoveFiles() {
-        removeFileList.forEach(
+        console.log("callRemoveFiles , removeFileList2  : " , removeFileList)
+        // removeFileList.forEach(
+        //     ({uuid, fileName}) => {
+        //         removeFileToServer({uuid, fileName})
+        //     })
+        // 수정 1
+        return removeFileList.map(
             ({uuid, fileName}) => {
-                removeFileToServer({uuid, fileName})
-            })
+                // 주의: 객체가 아닌 개별 인자로 풀어서 전달해야 합니다.
+                return removeFileToServer(uuid, fileName);
+            }
+        )
     }
+
+    // 순서3,
+    // 수정 작업,
+    //수정 하기 버튼 클릭시, 이벤트 작업.
+    // 순서3
+    // 수정 작업
+    document.querySelector(".modBtn").addEventListener("click", function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        formObj.action = `/board/modify?${link}`
+
+        // 첨부파일을 히든으로 추가
+        appendFileData()
+
+        console.log("callRemoveFiles 호출전")
+
+        // 비동기 삭제 요청(Promise)들의 배열을 가져옵니다.
+        const removePromises = callRemoveFiles()
+
+        // Promise.all을 통해 모든 삭제 요청이 성공적으로 끝날 때까지 기다립니다.
+        Promise.all(removePromises)
+            .then(() => {
+                console.log("첨부 파일 삭제 요청 완료, 수정을 진행합니다.");
+                formObj.method = 'post'
+                formObj.submit() // 모든 삭제 요청 후 안전하게 submit 진행
+            })
+            .catch(err => {
+                console.error("파일 삭제 통신 중 오류 발생:", err);
+                // 만약 물리 파일 삭제가 실패하더라도 글 수정은 진행하고 싶다면 여기에 submit을 추가할 수 있습니다.
+            });
+    })
 
     // 순서6
     // 삭제 작업, 기존에 삭제 버튼을 클릭시 작업하는 부분이 위에 있음.
