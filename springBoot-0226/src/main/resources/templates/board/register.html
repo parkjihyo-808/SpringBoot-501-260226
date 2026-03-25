@@ -2,6 +2,7 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout/base}">
 
 <body>
@@ -25,7 +26,9 @@
                         </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text"> Writer:  </span>
-                            <input class="form-control" type="text" name="writer">
+                            <input class="form-control" type="text" name="writer"
+                                   th:value="${#authentication.principal.username}" readonly
+                            >
                         </div>
 
                         <!-- 첨부 이미지 작업 -->
@@ -88,6 +91,17 @@
     <script src="/js/upload.js"></script>
 </div>
 <script layout:fragment="script" th:inline="javascript">
+
+    // 1번, 서버로부터 전달받은 로그인 유저 객체 및 유저명 확인
+    const currentUser = [[${user}]]
+    console.log("currentUser 객체확인 : " , currentUser)
+    const currentUser2 = [[${user.Username}]]
+    console.log("currentUser2 접속 유저명(Username 확인) : " , currentUser2)
+
+    // 2번, 타임리프 라이브러리 활용한, 방법,
+    const auth2 = [[${#authentication.principal}]]
+    console.log("auth2 : " , auth2)
+
     const errors = [[${errors}]]
     console.log("서버로부터 받은 유효성 체크 오류 : ", errors)
 

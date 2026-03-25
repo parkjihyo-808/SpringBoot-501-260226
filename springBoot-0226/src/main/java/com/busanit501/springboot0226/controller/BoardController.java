@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,6 +37,7 @@ public class BoardController {
     @Value("${com.busanit501.upload.path}")
     private String uploadPath;
 
+
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model) {
 //        PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
@@ -53,8 +56,9 @@ public class BoardController {
 //    @PreAuthorize("hasRole('USER')")
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/register")
-    public  void registerGet() {
-
+    public  void registerGet(@AuthenticationPrincipal UserDetails user, Model model) {
+        // user 정보를 화면에 전달하기.
+        model.addAttribute("user", user);
     }
 
     @PostMapping("/register")
@@ -76,6 +80,7 @@ public class BoardController {
 
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping({"/read","/modify"})
     public  void read(Long bno, PageRequestDTO pageRequestDTO, Model model) {
         BoardDTO boardDTO = boardService.readOne(bno);
@@ -83,6 +88,8 @@ public class BoardController {
         model.addAttribute("dto",boardDTO);
     }
 
+    // 로그인 유저와, 게시글 작성자가 일치하는 경우에만, 수정처리 가능하게 설정.
+    @PreAuthorize("principal.username == #boardDTO.writer")
     @PostMapping("/modify")
     public String modify(@Valid BoardDTO boardDTO, BindingResult bindingResult,
                          PageRequestDTO pageRequestDTO,
@@ -106,6 +113,8 @@ public class BoardController {
 
     }
 
+    // 로그인 유저와, 게시글 작성자가 일치하는 경우에만, 수정처리 가능하게 설정.
+    @PreAuthorize("principal.username == #boardDTO.writer")
     @PostMapping("/remove")
     // 삭제시, 화면에서 넘겨받은 , 삭제할 이미지 파일을 받을 준비 : BoardDTO 를 이용함.
 //    public String remove(Long bno,  RedirectAttributes redirectAttributes) {
