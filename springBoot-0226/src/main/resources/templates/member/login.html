@@ -35,14 +35,23 @@
                 </div>
 
                 <div class="my-4">
-                    <button type="button" class="btn btn-primary w-100 joinBtn">Join</button>
+                    <button type="button" class="btn btn-primary w-100 joinBtn">
+                        <a class="btn btn-primary w-100" th:href="@{/member/join}">Join</a>
+                    </button>
                 </div>
                 <div class="my-4">
                     <button type="submit" class="btn btn-primary w-100 submitBtn">LOGIN</button>
                 </div>
+
+                <a href="/oauth2/authorization/kakao">
+                    <img th:src="@{/images/login/kakao_login_medium_narrow.png}" alt="카카오 로그인 화면">
+                </a>
             </form>
         </div>
     </div>
 </div>
+<script layout:fragment="script" th:inline="javascript">
+
+</script>
 </body>
 </html>

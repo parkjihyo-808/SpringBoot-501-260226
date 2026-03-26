@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="www.thymeleaf.org"
+      layout:decorate="~{layout/base}"
+      lang="ko">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<div layout:fragment="content">
+    <!--    실제 화면에 출력되는 영역 이부분에 작업 하기.-->
+    <div class="card align-self-center">
+        <div class="card-header">
+            Join Page
+        </div>
+        <div class="card-body">
+            <form id="joinForm" action="/member/join" method="post">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">MID</span>
+                    <input type="text" name="mid" class="form-control" placeholder="아이디를 입력해주세요.">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">MPW</span>
+                    <input type="password" name="mpw" class="form-control" placeholder="패스워드를 입력해주세요">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">EMAIL</span>
+                    <input type="email" name="email" class="form-control" placeholder="이메일를 입력해주세요">
+                </div>
+
+                <div class="my-4">
+                    <button type="submit" class="btn btn-primary w-100 joinBtn">Join</button>
+                </div>
+                <div class="my-4">
+                    <button type="reset" class="btn btn-secondary w-100 ">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    const error = [[${error}]]
+    if(error && error === 'mid') {
+        alert("동일한 mid를 가진 회원이 존재합니다.")
+    }
+</script>
+
+
+</body>
+</html>

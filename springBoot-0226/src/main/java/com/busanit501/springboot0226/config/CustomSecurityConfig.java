@@ -2,6 +2,7 @@ package com.busanit501.springboot0226.config;
 
 import com.busanit501.springboot0226.security.CustomUserDetailsService;
 import com.busanit501.springboot0226.security.handler.Custom403Handler;
+import com.busanit501.springboot0226.security.handler.CustomSocialLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -66,9 +68,12 @@ public class CustomSecurityConfig {
 //        http.authorizeRequests()
         // 최신 Spring Security 6.x 람다 DSL 문법 적용
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**","/image/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**","/image/**",
+                                "http://localhost:8080/login/oauth2/code/kakao",
+                                "https://kauth.kakao.com",
+                                "https://kapi.kakao.com").permitAll()
                         // 리스트는 기본으로 다 들어갈수 있게.
-                        .requestMatchers("/", "/board/list","/logout", "/member/login","/images/**").permitAll()
+                        .requestMatchers("/", "/board/list","/logout", "/member/login","/member/join","/images/**").permitAll()
                         // 로그인 후 확인 하기.
 //                .requestMatchers("/board/register").hasRole("USER")
                         // 일반 유저와 관리자 모두 글쓰기 화면에 접근 가능
@@ -93,6 +98,15 @@ public class CustomSecurityConfig {
                 exception -> {
                     exception.accessDeniedHandler(accessDeniedHandler());
                 });
+
+        //순서7, 카카오 로그인 API 설정.
+        http.oauth2Login(
+                oauthLogin -> {
+                    oauthLogin.loginPage("/member/login");
+                    // 카카오 로그인 후 , 후처리 적용하기.
+                    oauthLogin.successHandler(authenticationSuccessHandler());
+                }
+        );
 
         return http.build();
     }
@@ -133,4 +147,13 @@ public class CustomSecurityConfig {
     public AccessDeniedHandler accessDeniedHandler() {
         return new Custom403Handler();
     }
+
+    // 순서8
+    // 카카오 로그인 후처리 등록하기.
+    // 순서 7에 적용.
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomSocialLoginSuccessHandler(passwordEncoder());
+    }
+
 }

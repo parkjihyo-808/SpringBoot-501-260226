@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Map;
 // 시큐리티에서는 원하는 템플릿 구조,
 // 원하는 타입 : UserDetails ,
 // 간단한 방법은 시큐리티에서 제공하는 User 클래스를 상속 받으면됨.
-public class MemberSecurityDTO extends User {
+public class MemberSecurityDTO extends User implements OAuth2User {
     private String mid;
     private String mpw;
     private String email;
@@ -38,4 +39,14 @@ public class MemberSecurityDTO extends User {
         this.social = social;
 
     }
+    @Override // 소셜 로그인한 유저 정보의 담아둔 map 조회
+    public Map<String,Object> getAttributes() {
+        return this.getProps();
+    }
+
+    @Override
+    public String getName() {
+        return this.mid; // 로그인시, mid 와 비교해서 작업 할 예정.
+    }
+
 }
